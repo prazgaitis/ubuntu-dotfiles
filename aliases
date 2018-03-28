@@ -1,0 +1,450 @@
+alias cls="clear"
+
+alias cd.="cd .."
+alias cd2.="cd ../.."
+alias cd3.="cd ../../.."
+alias cd4.="cd ../../../.."
+alias cd5.="cd ../../../../.."
+alias cd6.="cd ../../../../../.."
+
+alias g="git"
+alias gst="git status"
+alias g st="git status"
+alias gb="git branch -vv"
+alias gd="git diff"
+alias gh="git hist -20"
+alias gca="git commit --all"
+alias gitopen='vim $(git status -s | awk '"'"'{print $2}'"'"')'
+alias gr="git reset"
+alias gs="git status"
+alias gl="git log"
+alias dbdo="bundle exec rake db:do_over"
+alias dbdos="bundle exec rake db:do_schema"
+alias dbtp="bundle exec rake db:truncate db:populate_data"
+alias cdbrain="cd ~/bt"
+
+clone-cd() {
+  dest=$1
+
+  cd ~/bt
+  if [ ! -d $dest ]; then
+    brit clone $dest
+  fi
+
+  cd $dest
+}
+
+alias inferior-slime="~/bt/inferior-slime/bin/inferior-slime-server"
+alias bi="bundle install"
+alias be="bundle exec"
+alias boomstick="shotgun -o 0.0.0.0"
+alias btbookie="clone-cd marketplace_bookie"
+alias btaegis="clone-cd aegis"
+alias btaiblinkin="clone-cd aib-linkin"
+alias btamexsettlementparser="clone-cd amex_settlement_parser"
+alias btandroid="clone-cd braintree-android-encryption"
+alias btarbiter="clone-cd arbiter"
+alias btauthy="clone-cd authy"
+alias btbai="clone-cd bai_parser"
+alias btbilling="clone-cd billing"
+alias btbroxy="clone-cd broxy"
+alias btcheckout="clone-cd checkout"
+alias btdocs="clone-cd docs"
+alias btdotnet="clone-cd braintree-dotnet"
+alias btdrake="clone-cd drake"
+alias btfunding="clone-cd funding"
+alias btg="clone-cd gateway"
+alias btgist="clone-cd gist"
+alias bthookshot="clone-cd hookshot"
+alias btinf="clone-cd infrastructure"
+alias bti=btinf
+alias btint="clone-cd integrations"
+alias btios="clone-cd braintree-ios-encryption"
+alias btjava="clone-cd braintree-java"
+alias btmigrations="clone-cd merchant_data_import_tool"
+alias btnode="clone-cd braintree-node"
+alias btot="clone-cd ot_vault"
+alias btperl="clone-cd braintree-perl"
+alias btphp="clone-cd braintree-php"
+alias btprovisioner="clone-cd provisioner"
+alias btprov="btprovisioner"
+alias btp="btprovisioner"
+alias btpython="clone-cd braintree-python"
+alias btruby="clone-cd braintree-ruby"
+alias btseal="clone-cd seal"
+alias btsmerf="clone-cd smerf"
+alias btsftpsmerf="clone-cd sftp-smerf"
+alias btspy="clone-cd spy"
+alias btsys="clone-cd system-scripts"
+alias bttoby="clone-cd toby"
+alias btwindows="clone-cd braintree-windows-encryption"
+alias gateway="clone-cd gateway"
+alias btlogin="clone-cd login"
+alias btapply="clone-cd apply"
+alias btwarp="clone-cd warp"
+alias btbraintreepayments="clone-cd braintreepayments.com"
+alias btmarketing="clone-cd braintreepayments.com"
+alias btm="btmarketing"
+alias btww="clone-cd webhook_worker"
+alias btvt="clone-cd venmo-touch"
+alias btwellington="clone-cd wellington"
+alias btwell="clone-cd wellington"
+
+alias btdotnetex="clone-cd braintree-dotnet-examples"
+alias btjavaex="clone-cd braintree-java-examples"
+alias btphpex="clone-cd braintree_php_examples"
+alias btpythonex="clone-cd braintree-python-examples"
+alias btrubyex="clone-cd braintree-ruby-examples"
+
+btodc() {
+  gopath="${GOPATH:-$HOME/go}"
+  odcdir="$gopath/src/github.braintreeps.com/braintree/odyssey"
+
+  if [ ! -d "$odcdir" ]; then
+    git clone git@github.braintreeps.com:braintree/odyssey.git "$odcdir"
+  fi
+
+  cd "$odcdir"
+}
+
+alias bza='./bazel analyze'
+alias bzb='./bazel build'
+alias bzt='./bazel test'
+alias bzu="(cd ~/bazel; git pull; ./compile.sh build `which bazel`)"
+
+alias ca="cd ~/cosmos/apps"
+alias cdt="cd ~/cosmos/dimension-terraform"
+
+alias ci="bt-ci"
+alias 'ci?'="bt-ci status"
+alias cigw="bt-ci category show Gateway"
+alias cigwr="bt-ci category show Gateway -p release"
+
+fknkillunicorn() {
+  app="$1"
+  if [[ -f /tmp/$app.pid ]]; then
+    cat /tmp/$app.pid | xargs kill -9
+    rm /tmp/$app.pid
+  else
+    echo "$app: no process found"
+  fi
+}
+
+setupapp() {
+  app="$1"
+  bundleinstalloption="$2"
+  echo "Setting up $app"
+  (clone-cd $app && git pull --rebase && bundle install $bundleinstalloption && dbdo && cd -) || { echo "Failed to setup $app"; return 1; }
+}
+
+setup_app_without_dbdo() {
+  app="$1"
+  echo "Setting up $app"
+  (clone-cd $app && git pull --rebase && git clean -xdf && bundle install && cd -) || { echo "Failed to setup $app"; return 1; }
+}
+
+setupapp_with_git_clean() {
+  app="$1"
+  bundleinstalloption="$2"
+  echo "Setting up $app"
+  (clone-cd $app && git co . && git clean -xdf && git pull --rebase && bundle install $bundleinstalloption && dbdo && cd -) || { echo "Failed to setup $app"; return 1; }
+}
+
+setupcljapp() {
+  app="$1"
+  echo "Setting up $app"
+  (clone-cd $app && git pull --rebase && lein deps && lein git-deps && cd -) || { echo "Failed to setup $app"; return 1; }
+}
+
+alias fknkillgw="fknkillunicorn gateway-unicorn"
+alias fknkillprovisioner="fknkillunicorn provisioner-unicorn"
+alias fknkillclientauth="fknkillunicorn client-authorization-unicorn"
+alias fkndie="killall --user $USER -TERM ruby rake thin node nginx apache2 haproxy python php;fknkillgw;fknkillprovisioner;fknkillclientauth;redis-cli flushall"
+alias fknsetupapps="
+  echo 'Attempting to setup gateway apps'
+  setupapp authy --local || return 1
+  setupapp gateway --local || return 1
+  setup_app_without_dbdo client-authorization-service || return 1
+  setupapp provisioner || return 1
+  setupapp integrations || return 1
+  setupapp login || return 1
+  setup_app_without_dbdo arbiter || return 1
+  setupcljapp pgq-kafka-bridge || return 1
+  setupcljapp elasticsearch-loader || return 1
+  echo 'Setup gateway apps'"
+alias flushdns="sudo killall -HUP mDNSResponder"
+
+fknstart() {
+  ssh -T git@github.braintreeps.com -o 'ConnectionAttempts=1' 2> /dev/null
+  if [ $? -eq 255 ]; then  # Permission denied (publickey)
+    ressh
+  fi
+  fkndie && foreman start
+}
+
+fknappbranches() {
+  apps=(authy gateway provisioner integrations login arbiter pgq-kafka-bridge elasticsearch-loader)
+
+  for app in ${apps[@]}; do
+    echo "$app: `clone-cd $app &> /dev/null && git rev-parse --abbrev-ref HEAD`"
+  done
+}
+
+fknfixdocker() {
+  if [ -f /etc/init.d/firewall ]; then
+    echo '[INFO] Restarting firewall... '
+    sudo /etc/init.d/firewall
+    echo '[INFO] Done.'
+  fi
+  sudo /etc/init.d/docker restart
+}
+
+fknkilldocker() {
+  echo '[INFO] Stopping and removing all docker containers and networks.'
+  docker ps --all --quiet | xargs --no-run-if-empty docker rm --force --volumes
+  docker network ls --quiet | xargs --no-run-if-empty docker network rm 2>&1 | grep --invert-match "is a pre-defined network"
+  echo '[INFO] Done.'
+  fknfixdocker
+}
+alias fknstartdrake="fknkilldocker && drake start"
+
+alias bt-killgw=fknkillgw
+alias bt-killprovisioner=fknkillprovisioner
+alias bt-die=fkndie
+alias bt-setupapps=fknsetupapps
+alias bt-start=fknstart
+alias bt-fixdocker=fknfixdocker
+alias bt-killdocker=fknkilldocker
+alias bt-startdrake=fknstartdrake
+
+alias mysqlstart='sudo /opt/local/bin/mysqld_safe5'
+alias mysqlstop='/opt/local/bin/mysqladmin5 -u root shutdown'
+
+alias sourcebash="source ~/.bash_login"
+
+alias textedit="open -a TextEdit"
+alias openx="open . -a xcode"
+
+alias podn="pod --no-repo-update"
+
+case "$(uname)" in
+    Linux) alias ls='ls -F --color=auto';;
+    *) alias ls='ls -FG';;
+esac
+alias l="ls -lFh"
+alias la='ls -a'
+alias ll='ls -alh'
+
+alias glog='tail -f ~/bt/gateway/log/development.log| grep -E "Processing|Parameters|Completed" -B1'
+
+alias showfeature="~/bt/system-scripts/random/showfeature"
+
+alias rc=rake_commit
+
+revof () {
+  pushd -q ~/bt/gateway
+  git fetch -q
+  curl -s "https://$1.braintreegateway.com/revision" | cut -d- -f1 | xargs git name-rev
+  popd -q
+}
+
+alias revof-sandbox="revof sandbox"
+alias revof-production="revof www"
+alias revof-qa="revof qa"
+alias revof-qa2="revof qa2"
+alias revof-all="
+  echo -n 'production: '; revof-production;
+  echo -n 'sandbox: '; revof-sandbox;
+  echo -n 'qa: '; revof-qa;
+  echo -n 'qa2: '; revof-qa2;"
+
+alias revof-marketing="pushd -q ~/bt/braintreepayments.com; curl -s http://www.braintreepayments.com/revision | cut -d- -f1 | xargs git name-rev; popd -q"
+
+markdown () {
+  ruby -rrubygems -e "require 'redcarpet'; puts Redcarpet::Markdown.new(Redcarpet::Render::HTML, :fenced_code_block => true).render(File.read('$1'))" > /tmp/markdown.html && open /tmp/markdown.html
+}
+
+pbpush () {
+  pbpaste  | ssh $1 'pbcopy'
+}
+
+ressh() {
+  for agent_sock in /tmp/ssh-*/agent.*; do
+    [ ! -S "$agent_sock" ] && continue
+
+    env SSH_AUTH_SOCK="$agent_sock" timeout 1 ssh-add -L &> /dev/null
+    CODE="$?"
+
+    if [ "$CODE" = 2 ]; then
+      rm -rf "$agent_sock" &> /dev/null
+    elif [ "$CODE" = 0 ]; then
+      export SSH_AUTH_SOCK="${agent_sock}"
+      echo "export SSH_AUTH_SOCK=${agent_sock}"
+    fi
+  done
+
+  echo ""
+  ssh-add -l 2>/dev/null
+}
+alias retry='ressh && /bin/zsh -c "`fc -ln -1`"'
+
+alias print256colors='(x=`tput op` y=`printf %80s`;for i in {0..256};do o=00$i;echo -e ${o:${#o}-3:3} `tput setaf $i;tput setab $i`${y// /=}$x;done)'
+
+alias pbpush-yoshi='pbpush pair@yoshi.local'
+alias pbpush-peach='pbpush pair@peach.local'
+alias pbpush-mario='pbpush pair@mario.local'
+alias pbpush-luigi='pbpush pair@luigi.local'
+alias pbpush-goomba='pbpush pair@goomba.local'
+alias pbpush-koopa='pbpush pair@koopa.local'
+alias pbpush-toad='pbpush pair@toad.local'
+alias pbpush-bulletbill='pbpush pair@bulletbill.local'
+alias pbpush-shyguy='pbpush pair@shyguy.local'
+alias pbpush-walle='pbpush pair@walle.local'
+alias pbpush-buzz='pbpush pair@buzz.local'
+alias pbpush-nemo='pbpush pair@nemo.local'
+alias pbpush-crush='pbpush pair@crush.local'
+alias pbpush-sulley='pbpush pair@sulley.local'
+alias pbpush-remy='pbpush pair@remy.local'
+alias pbpush-syndrome='pbpush pair@syndrome.local'
+alias butts="curl http://mario.local/hammertime/add_for/butts"
+alias barbra="curl http://mario.local/hammertime/add_for/barbra"
+alias practice="curl http://mario.local/hammertime/add_for/practice"
+alias fixtmux="pkill -SIGWINCH -f tmux"
+alias warp="afplay ~/bt/system-scripts/pairing_stations/warp_pipe.wav; ssh -A -p 58224 warp1.braintreepayments.com"
+
+alias bt-setup-ssh="~/bt/system-scripts/pairing_stations/setup-ssh ~/Dropbox/devs\\ shared/devs.kdb"
+alias vague="clone-cd dev-box && vagrant up && vagrant ssh -- -A"
+alias bt-filter="sed \"s/[0-9]\{13,16\}/[FILTERED]/g\""
+
+if [[ `uname` == 'Linux' ]]; then
+  alias bt-pretty-dstat='dstat -tcldnm 10'
+else
+  alias top='top -o cpu'
+fi
+
+if [ -f /Applications/Emacs.app/Contents/MacOS/Emacs ]; then
+  alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
+fi
+
+alias npm-exec='env PATH="$(npm bin):$PATH"'
+alias ne='npm-exec'
+alias nvnuke='[ -e .nvmrc ] && nvm deactivate && nvm uninstall "$(cat .nvmrc)" && nvm install && rm -rf ./node_modules && npm install'
+
+cleanpair () {
+  message="CONGRATS: Your pair is safe to use and has no unfinished commits laying around."
+  for project in ~/bt/ ~/cosmos/; do
+    if [ -d $project ]; then
+      for dir_name in $(find $project -maxdepth 3 -type d -name .git -exec dirname {} \;); do
+        if [ -d $dir_name ]; then
+          if [ -z "$( git -C $dir_name status | grep 'nothing to commit, working directory clean')" ]; then
+            if [ "$1" = "-f" ]; then
+              git -C $dir_name add -A
+              git -C $dir_name stash > /dev/null 2> /dev/null
+
+              if [ $? -eq 0 ]; then
+                print "Changes found in $dir_name have been stashed"
+              else
+                print "Unable to stash changes in $dir_name; probably no git user configured!"
+                message="UH-OH: I was unable to stash your dirty files!"
+              fi
+            else
+              message="UH-OH: You've got some unfinished commits lying around."
+              echo "$dir_name has some dirty files: "
+              git -C "${dir_name}" ls-files -md | sed 's/^/  /' | xargs -I {} stat -c "{} - %z" $dir_name/{} | awk '{ print "  ",$3,$2,$1}'
+              git -C $dir_name ls-files --other --exclude-standard | sed 's/^/  /' | xargs -I {} stat -c "{} - %z" $dir_name/{} | awk '{ print "  ",$3,$2,$1}'
+              git -C $dir_name diff-index --cached --name-only HEAD 2>/dev/null | sed 's/^/  /' | xargs -I {} stat -c "{} - %z" $dir_name/{} | awk '{ print "  ",$3,$2,$1}'
+              echo
+            fi
+          fi
+        fi
+      done
+    fi
+  done
+  echo $message
+}
+
+alias spair='ssh -t support01.chi vpair'
+alias dspec='grep -E "^ *describe[ \(]|^ *context[ \(]|^ *it[ \(]"'
+alias bt-spec-summary=rspec-summary
+alias bt-spec-changed='rspec `git diff --name-only origin/master... spec/**/*.rb | grep -v integ`'
+alias docker-rm-containers='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
+if [ -d "$HOME/.rvm" ]; then
+  alias drake="rvm system do drake"
+fi
+
+pretty-print-csv() {
+  column -s, -t < $1 | less -N -S
+}
+
+alias upgrade-stars="pip install --user --upgrade stars"
+alias stars-upgrade="upgrade-stars"
+
+alias upgrade-rdsctl="pip install --user --upgrade rdsctl"
+alias rdsctl-upgrade="upgrade-rdsctl"
+
+if [[ -d /aws ]] ; then
+  alias initialize-ebs="sudo fio --filename=/dev/xvda --rw=randread --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize"
+
+  get-t2-cpu-credits() {
+    region=`cat /aws/meta-data/placement/availability-zone | sed 's/[a-z]$//'`
+    instance_id=`cat /aws/meta-data/instance-id`
+
+    start_time=`date -I'seconds' -d '10 minutes ago'`
+    end_time=`date -I'seconds' -d 'now'`
+
+    aws --region $region cloudwatch get-metric-statistics --namespace AWS/EC2 --metric-name CPUCreditBalance --period 60 --statistics Minimum --dimensions Name=InstanceId,Value=$instance_id --start-time $start_time --end-time $end_time | jq '.Datapoints[0].Minimum'
+  }
+fi
+
+_cosmos-clone() {
+  set -x
+  repo=$1
+  dir=$2
+  git clone --recursive git@github.braintreeps.com:cosmos/$repo $dir
+}
+
+cosmos-clone() {
+  for repo do
+    _cosmos-clone $repo ~/cosmos/$repo
+  done
+}
+
+cosmos-clone-go() {
+  for repo do
+    _cosmos-clone $repo ~/go/src/github.braintreeps.com/cosmos/$repo
+  done
+}
+
+
+case "$(uname)" in
+  Linux) alias psg='ps -eo pid,user,start_time,cmd --sort -etime | fgrep -v "grep" | grep -E';;
+  *)     alias psg='ps -eo pid,user,start,command | fgrep -v "grep" | grep -E';;
+esac
+
+btcat () {
+  cat "$@" | bt-filter
+}
+
+btgrep () {
+  grep "$@" | bt-filter
+}
+
+bthead () {
+  head "$@" | bt-filter
+}
+
+bttail () {
+  tail "$@" | bt-filter
+}
+
+btless () {
+  less "$@" | bt-filter
+}
+
+fixssh () {
+  eval $(~/bt/system-scripts/bin/fixssh $1 $2)
+}
+
+tm-rename () {
+   tmux rename-window $(basename $(git rev-parse --show-toplevel 2> /dev/null || pwd))
+}
